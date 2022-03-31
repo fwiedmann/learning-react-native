@@ -3,6 +3,11 @@ import {StyleSheet, View} from "react-native";
 import ColorCounter from "../components/ColorCounter";
 
 
+// never change the state directly in the reducer.
+// If so react will not be able to detect changes and will not re-render the component
+// To make changes, create a new state object with the current values of the state argument and then make changes to it afterwards
+// to the properties
+// Also make sure to return a value when no action.type was found so that the value of the state will not be empty on next re-rendering
 const reducer = (state, action) => {
     switch (action.type) {
         case 'change_red':
