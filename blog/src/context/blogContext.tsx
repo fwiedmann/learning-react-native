@@ -1,21 +1,7 @@
-import React, {useReducer} from "react";
+import createDataContext, {Action} from "./createDataContext";
 
 export type BlogPost = {
     title: string
-}
-
-export interface ContextValue {
-    data: BlogPost[],
-    addPosts: (post: BlogPost) => void
-}
-
-
-// Will store the value and will be used by the child's to receive the data/value
-const BlogContext = React.createContext({} as ContextValue);
-
-
-export type Probs = {
-    children: any;
 }
 
 export enum ActionTypes {
@@ -23,44 +9,31 @@ export enum ActionTypes {
 }
 
 
-type action = {
-    type: string,
-    post: BlogPost;
-}
-
-const reducer = (state: BlogPost[], action: action): BlogPost[] => {
+const reducer = (state: BlogPost[], action: Action): BlogPost[] => {
     switch (action.type) {
         case ActionTypes.CreatePost:
-            return action.post.title && state.find(value => value.title === action.post.title) === undefined ? [...state, action.post] : state;
+            return action.data.title && state.find(value => value.title === action.data.title) === undefined ? [...state, action.data] : state;
         default:
             return state;
     }
 };
 
-// BlogProvider component will be used to wrap around the app,
-export const BlogProvider = (probs: Probs) => {
-
-    const blogPosts: BlogPost[] = [
-        {
-            title: 'Blog Post 1'
-        },
-        {
-            title: 'Blog Post 2'
-        },
-    ]
-
-    const [state, dispatch] = useReducer(reducer, [...blogPosts] as BlogPost[])
-
-    const addPost = (post: BlogPost) => {
+export const addPost = (dispatch: (action: Action) => void) => {
+    return (p: BlogPost) => {
         dispatch({
             type: ActionTypes.CreatePost,
-            post: post,
-        })
-    };
+            data: p,
+        } as Action)
+    }
+};
 
-    return <BlogContext.Provider value={{data: state, addPosts: addPost}}>
-        {probs.children}
-    </BlogContext.Provider>
-}
-
-export default BlogContext
+export const {Context, Provider} = createDataContext(reducer, {
+    addPost
+}, [
+    {
+        title: 'Blog Post 1'
+    },
+    {
+        title: 'Blog Post 2'
+    },
+] as BlogPost[]);
