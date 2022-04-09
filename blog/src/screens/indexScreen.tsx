@@ -10,20 +10,20 @@ export type Probs = {
 
 
 const IndexScreen = ({navigation}: Probs) => {
-    const {state, addPost, deletePost} = useContext(BlogContext)
+    const {state, deletePost} = useContext(BlogContext)
 
     return <>
-        <FlatList style={styles.blogList} keyExtractor={item => item.title} data={state} renderItem={({item}) => {
+        <FlatList style={styles.blogList} keyExtractor={item => item.id} data={state} renderItem={({item}) => {
             return <TouchableOpacity
                 onPress={() => {
-                    navigation.navigate('Show', {te: item.title});
+                    navigation.navigate('Show', {id: item.id});
                 }}>
                 <View style={styles.blog}>
                     <Text style={styles.blogTitle}>{item.title}</Text>
                     <TouchableOpacity
                         onPress={() => {
                             deletePost({
-                                title: item.title
+                                id: item.id
                             })
                         }}>
                         <Feather style={styles.blogIcon} name={'trash'}/>

@@ -8,21 +8,27 @@ export type Probs = {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
-const CreateScreen = ({navigation}: Probs) => {
-    const {addPost} = useContext(Context);
+const EditScreen = ({navigation}: Probs) => {
+    const {state, editPost} = useContext(Context);
+
+    const post: BlogPost = state.find((post: { id: any; }) => post.id === navigation.getParam('id'))
+    if (!post) {
+        return null
+    }
+    
     const handleSubmit = (title: string, description: string) => {
         if (!title || !description) {
             return;
         }
-        addPost({
+        editPost({
+            id: post.id,
             title: title,
             description: description,
         } as BlogPost, () => {
-            navigation.navigate('Index')
+            navigation.goBack()
         })
     };
-
-    return <BlogPostForm onSubmit={handleSubmit} initialValues={{title: '', content: ''}}/>
+    return <BlogPostForm onSubmit={handleSubmit} initialValues={{title: post.title, content: post.description}}/>
 };
 
 
@@ -39,4 +45,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default CreateScreen
+export default EditScreen
